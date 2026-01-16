@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 400px;
+      min-height: 500px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f5f5f5;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .header .subtitle {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .tabs {
+      display: flex;
+      background: white;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      border: none;
+      background: white;
+      font-size: 14px;
+      font-weight: 500;
+      color: #666;
+      transition: all 0.2s;
+    }
+
+    .tab.active {
+      color: #667eea;
+      border-bottom: 2px solid #667eea;
+    }
+
+    .tab:hover {
+      background: #f9f9f9;
+    }
+
+    .content {
+      padding: 15px;
+      max-height: 450px;
+      overflow-y: auto;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #333;
+    }
+
+    .problem-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .problem-item {
+      background: white;
+      border-radius: 8px;
+      padding: 12px;
+      border: 1px solid #e0e0e0;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .problem-item:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transform: translateY(-1px);
+    }
+
+    .problem-item.due {
+      border-left: 4px solid #667eea;
+    }
+
+    .problem-item.completed {
+      border-left: 4px solid #4caf50;
+    }
+
+    .problem-title {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .problem-meta {
+      font-size: 12px;
+      color: #666;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .problem-stats {
+      display: flex;
+      gap: 12px;
+    }
+
+    .stat {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .stat-icon {
+      width: 14px;
+      height: 14px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #999;
+    }
+
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+
+    .empty-state-text {
+      font-size: 14px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+
+    .badge.due {
+      background: #fff3e0;
+      color: #f57c00;
+    }
+
+    .badge.completed {
+      background: #e8f5e9;
+      color: #388e3c;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+
+    .stats-summary {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-around;
+    }
+
+    .stat-box {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 600;
+      color: #667eea;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .problem-info-card {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .problem-info-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .problem-info-url {
+      font-size: 12px;
+      color: #666;
+      word-break: break-all;
+    }
+
+    .rating-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .rating-scale {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .rating-btn {
+      flex: 1;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 12px 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      min-width: 60px;
+    }
+
+    .rating-btn:hover {
+      border-color: #667eea;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+    }
+
+    .rating-btn.selected {
+      border-color: #667eea;
+      background: #f0f4ff;
+    }
+
+    .rating-btn.selected[data-rating="1"] {
+      border-color: #f44336;
+      background: #ffebee;
+    }
+
+    .rating-btn.selected[data-rating="2"] {
+      border-color: #ff9800;
+      background: #fff3e0;
+    }
+
+    .rating-btn.selected[data-rating="3"] {
+      border-color: #ffc107;
+      background: #fffde7;
+    }
+
+    .rating-btn.selected[data-rating="4"] {
+      border-color: #4caf50;
+      background: #e8f5e9;
+    }
+
+    .rating-btn.selected[data-rating="5"] {
+      border-color: #2196f3;
+      background: #e3f2fd;
+    }
+
+    .rating-number {
+      font-size: 24px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .rating-label-small {
+      font-size: 11px;
+      color: #666;
+    }
+
+    .rating-feedback {
+      text-align: center;
+      padding: 12px;
+      border-radius: 6px;
+      margin-top: 12px;
+      font-size: 14px;
+      min-height: 20px;
+    }
+
+    .rating-feedback.success {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .submit-rating-btn {
+      width: 100%;
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 12px;
+    }
+
+    .submit-rating-btn:hover {
+      background: #5568d3;
+    }
+
+    .submit-rating-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .settings-card {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .setting-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .setting-description {
+      font-size: 12px;
+      color: #666;
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+
+    .setting-input {
+      width: 60px;
+      padding: 6px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .reset-btn {
+      width: 100%;
+      background: #d32f2f;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .reset-btn:hover {
+      background: #b71c1c;
+    }
+
+    .reset-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <h1>LeetCode Spaced Repetition</h1>
+    <div class="subtitle">Track your progress and review schedule</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="log">Log</button>
+    <button class="tab" data-tab="today">Today</button>
+    <button class="tab" data-tab="all">All Problems</button>
+    <button class="tab" data-tab="settings">Settings</button>
+  </div>
+
+  <div class="content">
+    <div id="log-content" class="tab-content">
+      <div class="section-title">Log Your Confidence</div>
+      <div id="log-problem-info" class="problem-info-card">
+        <div class="loading">Detecting current problem...</div>
+      </div>
+      <div id="confidence-rating" style="display: none;">
+        <div class="rating-label">How confident are you with this problem?</div>
+        <div class="rating-scale">
+          <button class="rating-btn" data-rating="1">
+            <div class="rating-number">1</div>
+            <div class="rating-label-small">Very Hard</div>
+          </button>
+          <button class="rating-btn" data-rating="2">
+            <div class="rating-number">2</div>
+            <div class="rating-label-small">Hard</div>
+          </button>
+          <button class="rating-btn" data-rating="3">
+            <div class="rating-number">3</div>
+            <div class="rating-label-small">Medium</div>
+          </button>
+          <button class="rating-btn" data-rating="4">
+            <div class="rating-number">4</div>
+            <div class="rating-label-small">Easy</div>
+          </button>
+          <button class="rating-btn" data-rating="5">
+            <div class="rating-number">5</div>
+            <div class="rating-label-small">Very Easy</div>
+          </button>
+        </div>
+        <div id="rating-feedback" class="rating-feedback"></div>
+      </div>
+    </div>
+
+    <div id="today-content" class="tab-content" style="display: none;">
+      <div class="section-title">Problems Due Today</div>
+      <div id="today-problems" class="problem-list">
+        <div class="loading">Loading...</div>
+      </div>
+    </div>
+
+    <div id="all-content" class="tab-content" style="display: none;">
+      <div class="stats-summary">
+        <div class="stat-box">
+          <div class="stat-value" id="total-problems">0</div>
+          <div class="stat-label">Total</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" id="due-count">0</div>
+          <div class="stat-label">Due Today</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" id="completed-count">0</div>
+          <div class="stat-label">Completed</div>
+        </div>
+      </div>
+      <div class="section-title">All Problems</div>
+      <div id="all-problems" class="problem-list">
+        <div class="loading">Loading...</div>
+      </div>
+    </div>
+
+    <div id="settings-content" class="tab-content" style="display: none;">
+      <div class="section-title">Settings</div>
+      <div class="settings-card">
+        <label class="setting-label">
+          <span>Max Problems Per Day</span>
+          <input type="number" id="max-problems-input" class="setting-input" min="1" max="50" value="5">
+        </label>
+        <p class="setting-description">No day will have more than this many problems due. Due dates will be
+          automatically adjusted.</p>
+        <button id="save-settings-btn" class="submit-rating-btn" style="margin-top: 12px;">Save Settings</button>
+        <div id="settings-feedback" class="rating-feedback"></div>
+      </div>
+
+      <div class="settings-card" style="margin-top: 20px; border-top: 1px solid #e0e0e0; padding-top: 20px;">
+        <div class="section-title" style="font-size: 14px; margin-bottom: 12px; color: #d32f2f;">Danger Zone</div>
+        <p class="setting-description" style="margin-bottom: 12px;">This will permanently delete all your problem data
+          and reset settings to defaults. This action cannot be undone.</p>
+        <button id="reset-all-btn" class="reset-btn">Clear All Data</button>
+        <div id="reset-feedback" class="rating-feedback"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>
