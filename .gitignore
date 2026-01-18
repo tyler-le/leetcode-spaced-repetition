@@ -18,3 +18,8 @@ Thumbs.db
 
 # Temporary files
 ICON_INSTRUCTIONS.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
