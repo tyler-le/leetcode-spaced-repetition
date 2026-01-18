@@ -29,7 +29,17 @@ The collected data is used solely for the following purposes:
 
 ## Data Sharing
 
-**We do not share, sell, or transmit your data to any external servers or third parties.** All data remains on your device and is accessible only to you.
+**Your data is not shared with any parties.** 
+
+We do not share, sell, or transmit your data to:
+- External servers or cloud services
+- Third-party services or APIs
+- Analytics services
+- Advertising networks
+- Data brokers or aggregators
+- Any other parties, organizations, or individuals
+
+**All data remains on your device and is accessible only to you.** The extension operates entirely locally and does not transmit data outside of your browser.
 
 ## Data Control
 
